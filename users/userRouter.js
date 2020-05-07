@@ -9,7 +9,7 @@ router.post('/', (req, res) => {
   
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, validatePost,  (req, res) => {
   // do your magic!
  // console.log('Post it, ', req.user.name)
   
@@ -69,7 +69,7 @@ router.get('/:id/posts', validateUserId, (req, res) => {
   })
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
   Users.remove(req.params.id)
   .then(kill =>{
@@ -81,7 +81,7 @@ router.delete('/:id', (req, res) => {
   })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, validateUser, (req, res) => {
   // do your magic!
   const id = req.params.id;
   const userData = req.body;
@@ -122,11 +122,26 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   // do your magic!
+  
+  if (req.body === null || req.body === ""){
+    res.status(400).json({message: 'missing user data'});
+  }else if(req.body.name === null || req.body.name === ""){
+    res.status(400).json({message: 'missing required name field'})
+  }else{
+    next();
+  }
 
 }
 
 function validatePost(req, res, next) {
   // do your magic!
+  if(req.body === null || req.body === ''){
+    res.status(400).json({message: 'missing post data'})
+  }else if( req.body.text === null || req.body.text === ''){
+    res.status(400).json({message: 'missing required text field'})
+  }else{
+    next();
+  }
 }
 
 module.exports = router;
