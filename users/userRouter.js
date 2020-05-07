@@ -9,7 +9,7 @@ router.post('/', (req, res) => {
   
 });
 
-router.post('/:id/posts', validateUserId, (req, res) => {
+router.post('/:id/posts', (req, res) => {
   // do your magic!
  // console.log('Post it, ', req.user.name)
   
@@ -83,15 +83,16 @@ router.delete('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // do your magic!
-  // Users.update(req.params.id, req.body)
-  // .then(update =>{
-  //   if(update){
-  //     res.status(200).json(update);
-  //   }else{
-  //     res.status(404).json({message: 'Could not find id to update'})
-  //   }
-  // })
-  // })
+  const id = req.params.id;
+  const userData = req.body;
+  Users.getById(id)
+  .then(user =>{
+    Users.update(id, {
+      name: userData.name,
+    }).then((updated) =>{
+      Users.getById(id).then((user)=> res.status(200).json(user))
+    })
+  })
 });
 
 //custom middleware
